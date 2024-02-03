@@ -4,13 +4,10 @@ import (
 	"encoding/json"
 	"io"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/a-h/templ"
-	"github.com/alecthomas/chroma"
 	"github.com/alecthomas/chroma/formatters"
 	"github.com/alecthomas/chroma/lexers"
 	"github.com/alecthomas/chroma/styles"
@@ -65,19 +62,6 @@ func main() {
 	http.ListenAndServe(":8080", r)
 }
 
-var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
-
-const charset = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-func slug() string {
-	b := make([]byte, config.SlugLength)
-	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
-	}
-
-	return string(b)
-}
-
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -91,7 +75,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slug := slug()
+	slug := internal.Slug(config.SlugLength)
 	fileName := config.Data + slug
 
 	err = os.WriteFile(fileName, []byte(content), 0644)
