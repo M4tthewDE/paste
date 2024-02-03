@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"io"
 	"log"
 	"net/http"
@@ -15,46 +14,20 @@ import (
 	"github.com/m4tthewde/paste/internal"
 )
 
-type Config struct {
-	Data       string `json:"data"`
-	SlugLength int    `json:"slugLength"`
-}
-
-var config Config
-
-func parseConfig() error {
-	jsonFile, err := os.Open("config.json")
-	if err != nil {
-		return err
-	}
-
-	defer jsonFile.Close()
-
-	jsonBytes, err := io.ReadAll(jsonFile)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(jsonBytes, &config)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
+var config *internal.Config
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	err := parseConfig()
+	c, err := internal.ParseConfig()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	component := internal.Index()
+	config = c
 
 	r := chi.NewRouter()
-	r.Handle("/", templ.Handler(component))
+	r.Handle("/", templ.Handler(internal.Index()))
 	r.Post("/upload/paste", uploadHandler)
 	r.Get("/{slug}", slugHandler)
 
