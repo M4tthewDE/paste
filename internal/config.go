@@ -1,34 +1,23 @@
 package internal
 
 import (
-	"encoding/json"
-	"io"
 	"os"
+	"strconv"
 )
 
 type Config struct {
-	Data       string `json:"data"`
-	SlugLength int    `json:"slugLength"`
+	SlugLength int
+	BucketName string
 }
 
 func ParseConfig() (*Config, error) {
-	jsonFile, err := os.Open("config.json")
+	slugLength, err := strconv.Atoi(os.Getenv("SLUG_LENGTH"))
 	if err != nil {
 		return nil, err
 	}
 
-	defer jsonFile.Close()
-
-	jsonBytes, err := io.ReadAll(jsonFile)
-	if err != nil {
-		return nil, err
-	}
-
-	var config Config
-	err = json.Unmarshal(jsonBytes, &config)
-	if err != nil {
-		return nil, err
-	}
-
-	return &config, nil
+	return &Config{
+		SlugLength: slugLength,
+		BucketName: os.Getenv("BUCKET_NAME"),
+	}, nil
 }

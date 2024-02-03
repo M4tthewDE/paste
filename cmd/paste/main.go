@@ -1,16 +1,15 @@
 package main
 
 import (
-	"io"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/a-h/templ"
 	"github.com/alecthomas/chroma/formatters"
 	"github.com/alecthomas/chroma/lexers"
 	"github.com/alecthomas/chroma/styles"
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 	"github.com/m4tthewde/paste/internal"
 )
 
@@ -18,6 +17,10 @@ var config *internal.Config
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	c, err := internal.ParseConfig()
 	if err != nil {
@@ -49,9 +52,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slug := internal.Slug(config.SlugLength)
-	fileName := config.Data + slug
 
-	err = os.WriteFile(fileName, []byte(content), 0644)
+	err = internal.Upload(r.Context(), config.BucketName, slug, content)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -66,20 +68,18 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 func slugHandler(w http.ResponseWriter, r *http.Request) {
 	slug := chi.URLParam(r, "slug")
-	slugFile, err := os.Open(config.Data + slug)
-	if err != nil {
+	if slug == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	c, err := io.ReadAll(slugFile)
+	c, err := internal.Download(r.Context(), config.BucketName, slug)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 
 	if r.URL.Query().Has("raw") {
-		_, err = w.Write(c)
+		_, err := w.Write([]byte(c))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
