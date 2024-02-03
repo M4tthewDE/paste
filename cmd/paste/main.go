@@ -10,6 +10,10 @@ import (
 	"time"
 
 	"github.com/a-h/templ"
+	"github.com/alecthomas/chroma"
+	"github.com/alecthomas/chroma/formatters"
+	"github.com/alecthomas/chroma/lexers"
+	"github.com/alecthomas/chroma/styles"
 	"github.com/go-chi/chi/v5"
 	"github.com/m4tthewde/paste/internal"
 )
@@ -54,8 +58,8 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Handle("/", templ.Handler(component))
-	r.Post("/upload/paste", pasteHandler)
-	r.Get("/{slug}", dataHandler)
+	r.Post("/upload/paste", uploadHandler)
+	r.Get("/{slug}", slugHandler)
 
 	log.Println("Listening on :8080")
 	http.ListenAndServe(":8080", r)
@@ -74,7 +78,7 @@ func slug() string {
 	return string(b)
 }
 
-func pasteHandler(w http.ResponseWriter, r *http.Request) {
+func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -103,7 +107,7 @@ func pasteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func dataHandler(w http.ResponseWriter, r *http.Request) {
+func slugHandler(w http.ResponseWriter, r *http.Request) {
 	slug := chi.URLParam(r, "slug")
 	slugFile, err := os.Open(config.Data + slug)
 	if err != nil {
@@ -111,13 +115,41 @@ func dataHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	content, err := io.ReadAll(slugFile)
+	c, err := io.ReadAll(slugFile)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	_, err = w.Write(content)
+	if r.URL.Query().Has("raw") {
+		_, err = w.Write(c)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+
+		return
+	}
+
+	content := string(c)
+
+	var lexer chroma.Lexer
+	lexer = lexers.Analyse(content)
+	if lexer == nil {
+		lexer = lexers.Fallback
+	}
+
+	iterator, err := lexer.Tokenise(nil, content)
+
+	style := styles.Get("github")
+	if style == nil {
+		style = styles.Fallback
+	}
+	formatter := formatters.Get("html")
+	if formatter == nil {
+		formatter = formatters.Fallback
+	}
+
+	err = formatter.Format(w, style, iterator)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
