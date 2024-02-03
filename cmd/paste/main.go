@@ -29,8 +29,8 @@ func main() {
 	r.Post("/upload/paste", uploadHandler)
 	r.Get("/{slug}", slugHandler)
 
-	log.Println("Listening on :8080")
-	http.ListenAndServe(":8080", r)
+	log.Println("Listening on :" + config.Port)
+	http.ListenAndServe(":"+config.Port, r)
 }
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {

@@ -8,6 +8,7 @@ import (
 type Config struct {
 	SlugLength int
 	BucketName string
+	Port       string
 }
 
 func ParseConfig() (*Config, error) {
@@ -19,5 +20,6 @@ func ParseConfig() (*Config, error) {
 	return &Config{
 		SlugLength: slugLength,
 		BucketName: os.Getenv("BUCKET_NAME"),
+		Port:       os.Getenv("PORT"),
 	}, nil
 }
