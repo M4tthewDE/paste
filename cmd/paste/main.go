@@ -9,7 +9,6 @@ import (
 	"github.com/alecthomas/chroma/lexers"
 	"github.com/alecthomas/chroma/styles"
 	"github.com/go-chi/chi/v5"
-	"github.com/joho/godotenv"
 	"github.com/m4tthewde/paste/internal"
 )
 
@@ -17,10 +16,6 @@ var config *internal.Config
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalln(err)
-	}
 
 	c, err := internal.ParseConfig()
 	if err != nil {
