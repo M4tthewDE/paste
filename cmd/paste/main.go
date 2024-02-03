@@ -132,21 +132,27 @@ func slugHandler(w http.ResponseWriter, r *http.Request) {
 
 	content := string(c)
 
-	var lexer chroma.Lexer
-	lexer = lexers.Analyse(content)
+	lexer := lexers.Analyse(content)
 	if lexer == nil {
 		lexer = lexers.Fallback
 	}
 
 	iterator, err := lexer.Tokenise(nil, content)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	style := styles.Get("github")
 	if style == nil {
-		style = styles.Fallback
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
+
 	formatter := formatters.Get("html")
 	if formatter == nil {
-		formatter = formatters.Fallback
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	err = formatter.Format(w, style, iterator)
