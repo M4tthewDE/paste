@@ -28,6 +28,7 @@ func main() {
 	r.Handle("/", templ.Handler(internal.Index()))
 	r.Post("/upload/paste", uploadHandler)
 	r.Get("/{slug}", slugHandler)
+	r.Get("/info/health", healthHandler)
 
 	log.Println("Listening on :" + config.Port)
 	http.ListenAndServe(":"+config.Port, r)
@@ -110,5 +111,13 @@ func slugHandler(w http.ResponseWriter, r *http.Request) {
 	err = formatter.Format(w, style, iterator)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := w.Write([]byte("UP"))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 }
