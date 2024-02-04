@@ -9,18 +9,6 @@ import "github.com/a-h/templ"
 import "context"
 import "io"
 import "bytes"
-import "strings"
-
-func classTextArea() templ.CSSClass {
-	var templ_7745c5c3_CSSBuilder strings.Builder
-	templ_7745c5c3_CSSBuilder.WriteString(`width:100%;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`height:100%;`)
-	templ_7745c5c3_CSSID := templ.CSSID(`classTextArea`, templ_7745c5c3_CSSBuilder.String())
-	return templ.ComponentCSSClass{
-		ID:    templ_7745c5c3_CSSID,
-		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
-	}
-}
 
 func Index() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -35,24 +23,7 @@ func Index() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><div><h1>Paste</h1><form hx-post=\"/upload/paste\" hx-swap=\"none\"><input type=\"submit\" value=\"Paste\"> ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var2 = []any{"textarea", classTextArea()}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<textarea name=\"content\" class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var2).String()))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" spellcheck=\"false\"></textarea></form></div><script>\n\t\thtmx.on(\"htmx:afterRequest\", function (evt) {\n\t\t\tif (evt.detail.successful) {\n\t\t\t\twindow.location.href = \"/\" + evt.detail.xhr.response\n\t\t\t}\n\t\t});\n\n\t</script></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><style type=\"text/css\">\n\t\t\t.textarea {\n\t\t\t\twidth: 100%;\n\t\t\t\tresize: none;\n\t\t\t\toverflow-y: hidden;\n\t\t\t}\n\t\t</style><div class=\"\"><h1>Paste</h1><form hx-post=\"/upload/paste\" hx-swap=\"none\"><input type=\"submit\" value=\"Paste\"> <textarea name=\"content\" class=\"textarea\" spellcheck=\"false\" oninput=\"autoResize(this)\"></textarea></form></div><script>\n\t\t\thtmx.on(\"htmx:afterRequest\", function (evt) {\n\t\t\t\tif (evt.detail.successful) {\n\t\t\t\t\twindow.location.href = \"/\" + evt.detail.xhr.response\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tfunction autoResize(textarea) {\n\t\t\t    textarea.style.height = 'auto'; // Reset the height\n\t\t\t    textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to the scroll height\n\t\t\t}\n\t\t</script></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,9 +42,9 @@ func Paste(paste string) templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><style>\n\t\t\t.paste-div {\n\t\t\t\tpadding: 20px;\n\t\t\t}\n\t\t</style><h1>Paste</h1><a href=\"/\">New</a><hr><div class=\"paste-div\">")

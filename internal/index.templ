@@ -1,29 +1,35 @@
 package internal
 
-css classTextArea() {
-	width: 100%;
-	height: 100%;
-}
-
 templ Index() {
 	<!DOCTYPE html>
 	<html>
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-		<div>
+		<style type="text/css">
+			.textarea {
+				width: 100%;
+				resize: none;
+				overflow-y: hidden;
+			}
+		</style>
+		<div class="">
 			<h1>Paste</h1>
 			<form hx-post="/upload/paste" hx-swap="none">
 				<input type="submit" value="Paste"/>
-				<textarea name="content" class={ "textarea", classTextArea() } spellcheck="false"></textarea>
+				<textarea name="content" class="textarea" spellcheck="false" oninput="autoResize(this)"></textarea>
 			</form>
 		</div>
 		<script>
-		htmx.on("htmx:afterRequest", function (evt) {
-			if (evt.detail.successful) {
-				window.location.href = "/" + evt.detail.xhr.response
-			}
-		});
+			htmx.on("htmx:afterRequest", function (evt) {
+				if (evt.detail.successful) {
+					window.location.href = "/" + evt.detail.xhr.response
+				}
+			});
 
-	</script>
+			function autoResize(textarea) {
+			    textarea.style.height = 'auto'; // Reset the height
+			    textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to the scroll height
+			}
+		</script>
 	</html>
 }
 
