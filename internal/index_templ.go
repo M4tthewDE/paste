@@ -76,7 +76,7 @@ func Paste(paste string) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<style>\n\t\t.paste-div {\n\t\t\tpadding: 20px;\n\t\t}\n\t</style><h1>Paste</h1><a href=\"/\">New</a><hr><div class=\"paste-div\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><style>\n\t\t\t.paste-div {\n\t\t\t\tpadding: 20px;\n\t\t\t}\n\t\t</style><h1>Paste</h1><a href=\"/\">New</a><hr><div class=\"paste-div\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -84,7 +84,7 @@ func Paste(paste string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

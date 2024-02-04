@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
-	"github.com/alecthomas/chroma/formatters"
+	"github.com/alecthomas/chroma/formatters/html"
 	"github.com/alecthomas/chroma/lexers"
 	"github.com/alecthomas/chroma/styles"
 	"github.com/go-chi/chi/v5"
@@ -103,7 +103,7 @@ func slugHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	formatter := formatters.Get("html")
+	formatter := html.New(html.Standalone(false), html.WithLineNumbers(true))
 	if formatter == nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

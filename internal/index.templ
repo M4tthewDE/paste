@@ -25,15 +25,18 @@ templ Index() {
 }
 
 templ  Paste(paste string) {
-	<style>
-		.paste-div {
-			padding: 20px;
-		}
-	</style>
-	<h1>Paste</h1>
-	<a href="/">New</a>
-	<hr/>
-	<div class="paste-div">
-		@templ.Raw(paste)
-	</div>
+	<!DOCTYPE html>
+	<html>
+		<style>
+			.paste-div {
+				padding: 20px;
+			}
+		</style>
+		<h1>Paste</h1>
+		<a href="/">New</a>
+		<hr/>
+		<div class="paste-div">
+			@templ.Raw(paste)
+		</div>
+	</html>
 }
