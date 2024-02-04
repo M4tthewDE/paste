@@ -6,15 +6,17 @@ css classTextArea() {
 }
 
 templ Index() {
-	<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-	<div>
-		<h1>Paste</h1>
-		<form hx-post="/upload/paste" hx-swap="none">
-			<input type="submit" value="Paste"/>
-			<textarea name="content" class={ "textarea", classTextArea() } spellcheck="false"></textarea>
-		</form>
-	</div>
-	<script>
+	<!DOCTYPE html>
+	<html>
+		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<div>
+			<h1>Paste</h1>
+			<form hx-post="/upload/paste" hx-swap="none">
+				<input type="submit" value="Paste"/>
+				<textarea name="content" class={ "textarea", classTextArea() } spellcheck="false"></textarea>
+			</form>
+		</div>
+		<script>
 		htmx.on("htmx:afterRequest", function (evt) {
 			if (evt.detail.successful) {
 				window.location.href = "/" + evt.detail.xhr.response
@@ -22,6 +24,7 @@ templ Index() {
 		});
 
 	</script>
+	</html>
 }
 
 templ  Paste(paste string) {

@@ -35,7 +35,7 @@ func Index() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><div><h1>Paste</h1><form hx-post=\"/upload/paste\" hx-swap=\"none\"><input type=\"submit\" value=\"Paste\"> ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><div><h1>Paste</h1><form hx-post=\"/upload/paste\" hx-swap=\"none\"><input type=\"submit\" value=\"Paste\"> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -52,7 +52,7 @@ func Index() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" spellcheck=\"false\"></textarea></form></div><script>\n\t\thtmx.on(\"htmx:afterRequest\", function (evt) {\n\t\t\tif (evt.detail.successful) {\n\t\t\t\twindow.location.href = \"/\" + evt.detail.xhr.response\n\t\t\t}\n\t\t});\n\n\t</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" spellcheck=\"false\"></textarea></form></div><script>\n\t\thtmx.on(\"htmx:afterRequest\", function (evt) {\n\t\t\tif (evt.detail.successful) {\n\t\t\t\twindow.location.href = \"/\" + evt.detail.xhr.response\n\t\t\t}\n\t\t});\n\n\t</script></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
