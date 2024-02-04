@@ -1,60 +1,67 @@
 package main
 
 import (
+	"io"
 	"log"
 	"net/http"
 
-	"github.com/a-h/templ"
-	"github.com/alecthomas/chroma/formatters"
-	"github.com/alecthomas/chroma/lexers"
-	"github.com/alecthomas/chroma/styles"
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/go-chi/chi/v5"
-	"github.com/m4tthewde/paste/internal"
+	"github.com/m4tthewde/paste/internal/handlers"
 )
 
-var config *internal.Config
-
+// only for local development
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	c, err := internal.ParseConfig()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	config = c
-
 	r := chi.NewRouter()
-	r.Handle("/", templ.Handler(internal.Index()))
+	r.Get("/", indexHandler)
 	r.Post("/upload/paste", uploadHandler)
 	r.Get("/{slug}", slugHandler)
 
-	log.Println("Listening on :" + config.Port)
-	http.ListenAndServe(":"+config.Port, r)
+	log.Println("Listening on :8080")
+	http.ListenAndServe(":8080", r)
 }
 
-func uploadHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	resp, err := handlers.HandleIndex(r.Context())
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	content := r.FormValue("content")
-	if content == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	slug := internal.Slug(config.SlugLength)
-
-	err = internal.Upload(r.Context(), config.BucketName, slug, content)
-	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	_, err = w.Write([]byte(slug))
+	if resp.StatusCode != 200 {
+		w.WriteHeader(resp.StatusCode)
+		return
+	}
+
+	_, err = w.Write([]byte(resp.Body))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func uploadHandler(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	req := events.APIGatewayV2HTTPRequest{
+		Body: string(body),
+	}
+
+	resp, err := handlers.HandleUpload(r.Context(), req)
+	if resp.StatusCode != 200 {
+		w.WriteHeader(resp.StatusCode)
+		return
+	}
+
+	_, err = w.Write([]byte(resp.Body))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -64,51 +71,24 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 func slugHandler(w http.ResponseWriter, r *http.Request) {
 	slug := chi.URLParam(r, "slug")
 	if slug == "" {
+		log.Println("TEST")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	c, err := internal.Download(r.Context(), config.BucketName, slug)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+	req := events.APIGatewayV2HTTPRequest{
+		PathParameters: map[string]string{"slug": slug},
 	}
 
-	if r.URL.Query().Has("raw") {
-		_, err := w.Write([]byte(c))
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-
+	resp, err := handlers.HandleSlug(r.Context(), req)
+	if resp.StatusCode != 200 {
+		w.WriteHeader(resp.StatusCode)
 		return
 	}
 
-	content := string(c)
-
-	lexer := lexers.Analyse(content)
-	if lexer == nil {
-		lexer = lexers.Fallback
-	}
-
-	iterator, err := lexer.Tokenise(nil, content)
+	_, err = w.Write([]byte(resp.Body))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
-	}
-
-	style := styles.Get("github")
-	if style == nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	formatter := formatters.Get("html")
-	if formatter == nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	err = formatter.Format(w, style, iterator)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
