@@ -8,3 +8,7 @@ docker-push:
 .PHONY: docker-login
 docker-login:
 	@./with-env.sh aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 211018008663.dkr.ecr.us-east-1.amazonaws.com
+
+.PHONY: run
+run:
+	templ generate && ./with-env.sh go run cmd/local/main.go
