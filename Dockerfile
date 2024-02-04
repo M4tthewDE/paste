@@ -8,6 +8,7 @@ RUN go mod verify
 
 COPY cmd ./cmd
 COPY internal ./internal
+COPY static ./static
 
 RUN go build -v cmd/paste/main.go
 

@@ -15,6 +15,9 @@ import (
 
 func Router() *gin.Engine {
 	r := gin.Default()
+
+	r.StaticFile("/favicon.ico", "./static/favicon.ico")
+
 	r.GET("/", func(c *gin.Context) {
 		err := Index().Render(c.Request.Context(), c.Writer)
 		if err != nil {
