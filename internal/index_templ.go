@@ -23,7 +23,7 @@ func Index() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><style type=\"text/css\">\n\t\t\t.textarea {\n\t\t\t\twidth: 100%;\n\t\t\t\tresize: none;\n\t\t\t\toverflow-y: hidden;\n\t\t\t}\n\t\t</style><div class=\"\"><h1>Paste</h1><form hx-post=\"/upload/paste\" hx-swap=\"none\"><input type=\"submit\" value=\"Paste\"> <textarea name=\"content\" class=\"textarea\" spellcheck=\"false\" oninput=\"autoResize(this)\"></textarea></form></div><script>\n\t\t\thtmx.on(\"htmx:afterRequest\", function (evt) {\n\t\t\t\tif (evt.detail.successful) {\n\t\t\t\t\twindow.location.href = \"/\" + evt.detail.xhr.response\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tfunction autoResize(textarea) {\n\t\t\t    textarea.style.height = 'auto'; // Reset the height\n\t\t\t    textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to the scroll height\n\t\t\t}\n\t\t</script></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><style type=\"text/css\">\n\t\t\t.textarea {\n\t\t\t\twidth: 99%;\n\t\t\t\theight: 100%; \n\t\t\t\tresize: none;\n\t\t\t\tmargin-right: 10px;\n\t\t\t}\n\t\t\t\n\t\t\tinput {\n\t\t\t\tmargin-bottom: 10px;\n\t\t\t}\n\t\t</style><div class=\"\"><form hx-post=\"/upload/paste\" hx-swap=\"none\"><input type=\"submit\" value=\"Paste\"> <textarea placeholder=\"Your content goes here\" name=\"content\" class=\"textarea\" spellcheck=\"false\" oninput=\"autoResize(this)\"></textarea></form></div><script>\n\t\t\thtmx.on(\"htmx:afterRequest\", function (evt) {\n\t\t\t\tif (evt.detail.successful) {\n\t\t\t\t\twindow.location.href = \"/\" + evt.detail.xhr.response\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tfunction autoResize(textarea) {\n\t\t\t    textarea.style.height = \"auto\";\n\t\t\t    textarea.style.height = textarea.scrollHeight + \"px\";\n\t\t\t}\n\t\t</script></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -47,7 +47,7 @@ func Paste(paste string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><style>\n\t\t\t.paste-div {\n\t\t\t\tpadding: 20px;\n\t\t\t}\n\t\t</style><h1>Paste</h1><a href=\"/\">New</a><hr><div class=\"paste-div\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><style>\n\t\t\t.paste-div {\n\t\t\t}\n\n\t\t\thtml {\n\t\t\t\tbackground-color: white;\n\t\t\t}\n\t\t</style><div class=\"paste-div\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

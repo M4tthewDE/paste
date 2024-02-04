@@ -6,16 +6,20 @@ templ Index() {
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		<style type="text/css">
 			.textarea {
-				width: 100%;
+				width: 99%;
+				height: 100%;
 				resize: none;
-				overflow-y: hidden;
+				margin-right: 10px;
+			}
+
+			input {
+				margin-bottom: 10px;
 			}
 		</style>
 		<div class="">
-			<h1>Paste</h1>
 			<form hx-post="/upload/paste" hx-swap="none">
 				<input type="submit" value="Paste"/>
-				<textarea name="content" class="textarea" spellcheck="false" oninput="autoResize(this)"></textarea>
+				<textarea placeholder="Your content goes here" name="content" class="textarea" spellcheck="false" oninput="autoResize(this)"></textarea>
 			</form>
 		</div>
 		<script>
@@ -26,8 +30,8 @@ templ Index() {
 			});
 
 			function autoResize(textarea) {
-			    textarea.style.height = 'auto'; // Reset the height
-			    textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to the scroll height
+			    textarea.style.height = "auto";
+			    textarea.style.height = textarea.scrollHeight + "px";
 			}
 		</script>
 	</html>
@@ -38,12 +42,12 @@ templ  Paste(paste string) {
 	<html>
 		<style>
 			.paste-div {
-				padding: 20px;
+			}
+
+			html {
+				background-color: white;
 			}
 		</style>
-		<h1>Paste</h1>
-		<a href="/">New</a>
-		<hr/>
 		<div class="paste-div">
 			@templ.Raw(paste)
 		</div>
