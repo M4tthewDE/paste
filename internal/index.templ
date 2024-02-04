@@ -23,3 +23,16 @@ templ Index() {
 
 	</script>
 }
+
+templ  Paste(paste string) {
+	<style>
+		.paste-div {
+			padding: 20px;
+		}
+	</style>
+	<h1>Paste</h1>
+	<hr/>
+	<div class="paste-div">
+		@templ.Raw(paste)
+	</div>
+}

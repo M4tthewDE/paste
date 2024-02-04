@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"log"
 	"net/http"
 
@@ -108,9 +109,20 @@ func slugHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = formatter.Format(w, style, iterator)
+	var paste bytes.Buffer
+
+	err = formatter.Format(&paste, style, iterator)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	component := internal.Paste(paste.String())
+
+	err = component.Render(r.Context(), w)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 }
 
