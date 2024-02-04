@@ -2,6 +2,7 @@ package internal
 
 import (
 	"bytes"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -24,6 +25,7 @@ func Router() *gin.Engine {
 	r.POST("/upload/paste", func(c *gin.Context) {
 		content := c.PostForm("content")
 		if content == "" {
+			log.Println("no content")
 			c.String(http.StatusBadRequest, "")
 			return
 		}
@@ -31,6 +33,7 @@ func Router() *gin.Engine {
 		slugLength := os.Getenv("SLUG_LENGTH")
 		length, err := strconv.Atoi(slugLength)
 		if err != nil {
+			log.Println(err)
 			c.String(http.StatusInternalServerError, "")
 			return
 		}
@@ -39,6 +42,7 @@ func Router() *gin.Engine {
 
 		err = Upload(c.Request.Context(), os.Getenv("BUCKET_NAME"), slug, content)
 		if err != nil {
+			log.Println(err)
 			c.String(http.StatusInternalServerError, "")
 			return
 		}
@@ -49,12 +53,14 @@ func Router() *gin.Engine {
 	r.GET("/:slug", func(c *gin.Context) {
 		slug := c.Param("slug")
 		if slug == "" {
+			log.Println("no slug")
 			c.String(http.StatusBadRequest, "")
 			return
 		}
 
 		contentBytes, err := Download(c.Request.Context(), os.Getenv("BUCKET_NAME"), slug)
 		if err != nil {
+			log.Println(err)
 			c.String(http.StatusInternalServerError, "")
 		}
 
@@ -67,6 +73,7 @@ func Router() *gin.Engine {
 
 		iterator, err := lexer.Tokenise(nil, content)
 		if err != nil {
+			log.Println(err)
 			c.String(http.StatusInternalServerError, "")
 			return
 		}
@@ -87,12 +94,14 @@ func Router() *gin.Engine {
 
 		err = formatter.Format(&paste, style, iterator)
 		if err != nil {
+			log.Println(err)
 			c.String(http.StatusInternalServerError, "")
 			return
 		}
 
 		err = Paste(paste.String()).Render(c.Request.Context(), c.Writer)
 		if err != nil {
+			log.Println(err)
 			c.String(http.StatusInternalServerError, "")
 			return
 		}
