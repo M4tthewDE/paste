@@ -6,20 +6,27 @@ templ Index() {
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		<style type="text/css">
 			.textarea {
-				width: 99%;
+				width: 99t st%;
 				height: 100%;
 				resize: none;
-				margin-right: 10px;
+			}
+
+			.container {
+				height: 90vh;
 			}
 
 			input {
 				margin-bottom: 10px;
 			}
+
+			form {
+				height: 100%;
+			}
 		</style>
-		<div class="">
+		<div class="container">
 			<form hx-post="/upload/paste" hx-swap="none">
 				<input type="submit" value="Paste"/>
-				<textarea placeholder="Your content goes here" name="content" class="textarea" spellcheck="false" oninput="autoResize(this)"></textarea>
+				<textarea placeholder="Your content goes here" name="content" class="textarea" spellcheck="false"></textarea>
 			</form>
 		</div>
 		<script>
@@ -28,11 +35,6 @@ templ Index() {
 					window.location.href = "/" + evt.detail.xhr.response
 				}
 			});
-
-			function autoResize(textarea) {
-			    textarea.style.height = "auto";
-			    textarea.style.height = textarea.scrollHeight + "px";
-			}
 		</script>
 	</html>
 }
