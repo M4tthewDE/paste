@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"context"
 	"log"
 	"net/http"
 	"os"
@@ -11,24 +10,11 @@ import (
 	"github.com/alecthomas/chroma/formatters/html"
 	"github.com/alecthomas/chroma/lexers"
 	"github.com/alecthomas/chroma/styles"
-	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-lambda-go/lambda"
-	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/m4tthewde/paste/internal"
 )
 
-var ginLambda *ginadapter.GinLambda
-
 func main() {
-	lambda.Start(Handler)
-}
-
-func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	return ginLambda.ProxyWithContext(ctx, req)
-}
-
-func init() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	r := gin.Default()
@@ -116,5 +102,6 @@ func init() {
 		}
 	})
 
-	ginLambda = ginadapter.New(r)
+	log.Println("Listening on :8080")
+	r.Run(":8080")
 }
